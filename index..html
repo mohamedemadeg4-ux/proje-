@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101d36">
+<title>بوابة الطالب | الحضور الذكي</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style>
+:root{
+--navy:#0f172a;
+--navy-light:#1e293b;
+--navy-accent:#334155;
+--gold:#d97706;
+--gold-light:#fbbf24;
+--bg:#f8fafc;
+--card-bg:#ffffff;
+--text:#1e293b;
+--muted:#64748b;
+--border:#e2e8f0;
+--green:#059669;
+--red:#dc2626;
+--radius:16px;
+--shadow:0 10px 30px -5px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+--transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:"Cairo",sans-serif;
+-webkit-tap-highlight-color: transparent;
+}
+
+body{
+min-height:100vh;
+padding:30px 16px 50px;
+color:var(--text);
+background:linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+background-attachment: fixed;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+
+.page{
+width:100%;
+max-width:480px;
+margin:auto;
+animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.brand{
+text-align:center;
+margin-bottom:28px;
+}
+
+.logo{
+width:68px;
+height:68px;
+display:grid;
+place-items:center;
+margin:0 auto 14px;
+border-radius:20px;
+color:var(--gold-light);
+background:linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+border:2px solid rgba(217, 119, 6, 0.3);
+font-size:28px;
+font-weight:900;
+box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
+letter-spacing: 1px;
+}
+
+.brand h1{
+font-size:24px;
+color:var(--navy);
+font-weight:900;
+letter-spacing: -0.5px;
+}
+
+.brand p{
+font-size:13px;
+color:var(--muted);
+margin-top:4px;
+font-weight:600;
+}
+
+.panel{
+background:var(--card-bg);
+border:1px solid var(--border);
+border-radius:var(--radius);
+padding:28px 22px;
+box-shadow:var(--shadow);
+position: relative;
+overflow: hidden;
+}
+
+.panel::before {
+content: '';
+position: absolute;
+top: 0;
+right: 0;
+left: 0;
+height: 4px;
+background: linear-gradient(90deg, var(--navy), var(--gold));
+}
+
+.panel-title{
+font-size:19px;
+color:var(--navy);
+font-weight:800;
+margin-bottom:8px;
+}
+
+.panel-description{
+font-size:13px;
+color:var(--muted);
+line-height:1.7;
+margin-bottom:24px;
+}
+
+.form-group{
+margin-bottom:18px;
+}
+
+label{
+display:block;
+font-size:13px;
+font-weight:700;
+margin-bottom:8px;
+color:var(--navy-light);
+}
+
+input, select{
+width:100%;
+min-height:50px;
+padding:12px 16px;
+border:1.5px solid var(--border);
+border-radius:12px;
+background:#fafafa;
+color:var(--text);
+font-size:14px;
+font-weight:600;
+outline:none;
+transition: var(--transition);
+}
+
+input:hover, select:hover{
+border-color:#cbd5e1;
+}
+
+input:focus, select:focus{
+border-color:var(--gold);
+background:#ffffff;
+box-shadow:0 0 0 4px rgba(217, 119, 6, 0.12);
+}
+
+select {
+cursor: pointer;
+appearance: none;
+background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+background-repeat: no-repeat;
+background-position: left 14px center;
+background-size: 16px;
+padding-left: 40px;
+}
+
+.row{
+display:flex;
+gap:12px;
+}
+
+.row .form-group{
+min-width:0;
+flex:1;
+}
+
+.hint{
+color:var(--muted);
+font-size:11px;
+margin-top:6px;
+font-weight:500;
+}
+
+.btn{
+width:100%;
+min-height:50px;
+border:0;
+border-radius:12px;
+padding:12px;
+cursor:pointer;
+font-size:14px;
+font-weight:800;
+transition: var(--transition);
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+
+.btn:hover {
+transform: translateY(-1px);
+box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.btn:active{
+transform:scale(.98);
+}
+
+.btn:disabled{
+opacity:.6;
+cursor:wait;
+transform: none !important;
+box-shadow: none !important;
+}
+
+.btn-primary{
+background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+color:white;
+box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2);
+}
+
+.btn-primary:hover {
+background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy-accent) 100%);
+}
+
+.admin-entry{
+width:100%;
+min-height:48px;
+border:1.5px dashed var(--border);
+border-radius:12px;
+padding:12px;
+cursor:pointer;
+font-size:13px;
+font-weight:700;
+color:var(--navy);
+background:#f8fafc;
+margin-top:16px;
+transition: var(--transition);
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+
+.admin-entry:hover{
+background:#f1f5f9;
+border-color:var(--gold);
+color:var(--gold);
+}
+
+.admin-entry:active{transform:scale(.98)}
+
+.message{
+display:none;
+padding:14px 16px;
+border-radius:12px;
+font-size:13px;
+line-height:1.7;
+margin-bottom:20px;
+white-space:pre-line;
+font-weight:600;
+animation: fadeIn 0.3s ease-out;
+}
+
+.message.error{
+display:block;
+color:var(--red);
+background:#fef2f2;
+border:1px solid #fecaca;
+}
+
+.message.success{
+display:block;
+color:var(--green);
+background:#f0fdf4;
+border:1px solid #bbf7d0;
+}
+
+.result{
+display:none;
+margin-top:28px;
+padding-top:24px;
+border-top:2px dashed var(--border);
+animation: fadeIn 0.4s ease-out;
+}
+
+.result-heading{
+font-size:18px;
+font-weight:800;
+text-align:center;
+color:var(--navy);
+margin-bottom:6px;
+}
+
+.result-description{
+text-align:center;
+color:var(--muted);
+font-size:12px;
+margin-bottom:20px;
+}
+
+.student-card{
+position:relative;
+overflow:hidden;
+width:100%;
+padding:24px 20px 20px;
+background:#ffffff;
+border:2px solid var(--gold);
+border-radius:20px;
+text-align:center;
+box-shadow: 0 15px 35px -5px rgba(217, 119, 6, 0.15);
+}
+
+.card-top{
+background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+color:#fff;
+padding:18px 12px;
+margin:-24px -20px 18px;
+border-bottom:4px solid var(--gold);
+position: relative;
+}
+
+.card-emblem{
+font-size:26px;
+color:var(--gold-light);
+font-weight:900;
+margin-bottom:4px;
+letter-spacing: 1px;
+}
+
+.card-top h3{
+font-size:18px;
+font-weight:800;
+letter-spacing: -0.5px;
+}
+
+.card-top p{
+font-size:11px;
+color:#94a3b8;
+margin-top:4px;
+font-weight:500;
+}
+
+.card-label{
+color:var(--gold);
+font-size:10px;
+font-weight:800;
+letter-spacing:1px;
+margin-bottom: 4px;
+}
+
+#qrcode{
+display:flex;
+justify-content:center;
+align-items:center;
+margin:16px auto;
+min-height:190px;
+padding: 10px;
+background: #ffffff;
+border-radius: 12px;
+border: 1px solid var(--border);
+width: fit-content;
+box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+#qrCanvas{
+display:block;
+width:180px;
+height:180px;
+max-width:100%;
+}
+
+.card-name{
+color:var(--navy);
+font-size:18px;
+font-weight:900;
+line-height:1.6;
+overflow-wrap:anywhere;
+margin-top:12px;
+}
+
+.card-details{
+background:#f8fafc;
+border:1px solid var(--border);
+border-radius:12px;
+margin-top:16px;
+padding:14px;
+text-align:right;
+font-size:13px;
+line-height:2.2;
+overflow-wrap:anywhere;
+}
+
+.detail-row{
+display:flex;
+gap:8px;
+align-items:flex-start;
+}
+
+.detail-label{
+color:var(--muted);
+flex-shrink:0;
+font-weight:600;
+}
+
+.detail-value{
+color:var(--navy);
+font-weight:800;
+overflow-wrap:anywhere;
+}
+
+.card-footer{
+margin-top:16px;
+padding-top:12px;
+border-top:1px dashed var(--border);
+color:var(--muted);
+font-size:11px;
+line-height:1.6;
+font-weight:500;
+}
+
+.actions{
+display:grid;
+gap:12px;
+margin-top:18px;
+}
+
+.btn-pdf{background:#dc2626;color:white; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);}
+.btn-pdf:hover{background:#b91c1c;}
+
+.btn-image{background:var(--green);color:white; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);}
+.btn-image:hover{background:#047857;}
+
+.btn-reset{background:#f1f5f9;color:var(--navy); border: 1px solid var(--border);}
+.btn-reset:hover{background:#e2e8f0;}
+
+.footer{
+text-align:center;
+color:var(--muted);
+font-size:12px;
+margin-top:24px;
+font-weight:600;
+}
+
+/* نوافذ الإدارة والمودال */
+.modal{
+display:none;
+position:fixed;
+inset:0;
+width:100%;
+height:100%;
+background:rgba(15, 23, 42, 0.6);
+backdrop-filter: blur(4px);
+justify-content:center;
+align-items:center;
+padding:20px;
+z-index:1000;
+overflow-y:auto;
+animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content{
+background:var(--card-bg);
+width:100%;
+max-width:420px;
+padding:28px 22px;
+border-radius:20px;
+text-align:center;
+box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+max-height:90vh;
+overflow-y:auto;
+position: relative;
+border: 1px solid var(--border);
+}
+
+.modal-content h3{
+color:var(--navy);
+margin-bottom:12px;
+font-size:20px;
+font-weight:900;
+}
+
+.modal-content input[type="password"]{
+width:100%;
+padding:14px;
+border:1.5px solid var(--border);
+border-radius:12px;
+font-size:16px;
+outline:none;
+text-align:center;
+margin-bottom:14px;
+background: #fafafa;
+}
+
+.modal-buttons{
+display:flex;
+gap:12px;
+margin-top:16px;
+}
+
+.modal-btn{
+flex:1;
+border:none;
+padding:13px;
+border-radius:12px;
+font-weight:800;
+cursor:pointer;
+font-size:14px;
+transition: var(--transition);
+}
+
+.btn-confirm{background:var(--navy);color:white; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);}
+.btn-confirm:hover{background:var(--navy-light);}
+
+.btn-cancel{background:#e2e8f0;color:var(--navy);}
+.btn-cancel:hover{background:#cbd5e1;}
+
+.error-msg{
+color:var(--red);
+font-size:12px;
+margin-bottom:12px;
+display:none;
+line-height:1.7;
+white-space:pre-line;
+font-weight:700;
+background: #fef2f2;
+padding: 8px;
+border-radius: 8px;
+border: 1px solid #fecaca;
+}
+
+.admin-description{
+font-size:13px;
+color:var(--muted);
+line-height:1.8;
+margin-bottom:18px;
+font-weight:500;
+}
+
+.file-label{
+display:block;
+padding:22px 16px;
+border:2px dashed #cbd5e1;
+border-radius:14px;
+background:#f8fafc;
+color:var(--navy);
+font-size:14px;
+font-weight:800;
+cursor:pointer;
+margin-bottom:14px;
+transition: var(--transition);
+}
+
+.file-label:hover{
+border-color:var(--gold);
+background:#fffbeb;
+color:var(--gold);
+}
+
+.file-label input{display:none}
+
+.file-name{
+font-size:12px;
+color:var(--muted);
+margin-bottom:16px;
+overflow-wrap:anywhere;
+font-weight:600;
+}
+
+.import-warning{
+background:#fffbeb;
+border:1px solid #fde68a;
+color:#b45309;
+border-radius:12px;
+padding:12px;
+font-size:12px;
+line-height:1.8;
+text-align:right;
+margin:14px 0;
+font-weight:600;
+}
+
+.import-result{
+display:none;
+text-align:right;
+background:#f0fdf4;
+border:1px solid #bbf7d0;
+border-radius:12px;
+padding:14px;
+margin-top:14px;
+font-size:13px;
+line-height:1.8;
+color:var(--green);
+white-space:pre-line;
+font-weight:700;
+}
+
+.btn-import{
+width:100%;
+background:var(--green);
+color:white;
+border:0;
+padding:14px;
+border-radius:12px;
+font-weight:800;
+font-size:15px;
+cursor:pointer;
+box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+transition: var(--transition);
+}
+
+.btn-import:hover{background:#047857;}
+.btn-import:disabled{opacity:.5;cursor:wait; transform: none !important;}
+
+.btn-close{
+width:100%;
+margin-top:12px;
+background:#f1f5f9;
+color:var(--navy);
+border:1px solid var(--border);
+padding:12px;
+border-radius:12px;
+font-weight:700;
+cursor:pointer;
+transition: var(--transition);
+}
+
+.btn-close:hover{background:#e2e8f0;}
+
+@media(max-width:400px){
+body{padding:16px 10px 30px;}
+.panel{padding:20px 16px;}
+.row{gap:10px;}
+.student-card{padding:20px 14px 16px;}
+.card-top{margin:-20px -14px 14px;}
+}
+
+@media print{
+body{background:white!important;padding:0!important; display:block!important;}
+body *{visibility:hidden!important}
+#studentCard,#studentCard *{visibility:visible!important}
+#studentCard{
+position:absolute!important;
+top:0!important;
+right:0!important;
+width:100%!important;
+box-shadow:none!important;
+border: 2px solid #000 !important;
+}
+}
+</style>
+</head>
+
+<body>
+
+<main class="page">
+
+<header class="brand">
+<div class="logo">SA</div>
+<h1>الحضور الذكي</h1>
+<p>بوابة الطالب الإلكترونية</p>
+</header>
+
+<section class="panel">
+
+<h2 class="panel-title">التحقق من بيانات الطالب</h2>
+
+<p class="panel-description">
+أدخل بياناتك كما هي مسجلة في الكشف الرسمي.
+عند تطابق البيانات ستتمكن من إنشاء بطاقة الباركود الخاصة بك.
+</p>
+
+<div id="message" class="message" role="status" aria-live="polite"></div>
+
+<form id="studentForm" autocomplete="off">
+
+<div class="form-group">
+<label for="fullName">الاسم الرباعي الكامل</label>
+<input type="text" id="fullName" placeholder="اكتب الاسم كما في الكشف" maxlength="150" required>
+</div>
+
+<div class="form-group">
+<label for="nationalId">الرقم القومي</label>
+<input type="text" id="nationalId" inputmode="numeric" maxlength="14" pattern="[0-9]{14}" placeholder="14 رقمًا" required>
+<p class="hint">يجب أن يتكون الرقم من 14 رقمًا بالضبط.</p>
+</div>
+
+<div class="row">
+<div class="form-group">
+<label for="section">الشعبة</label>
+<select id="section" required>
+<option value="" disabled selected>اختر الشعبة</option>
+</select>
+</div>
+
+<div class="form-group">
+<label for="serialNumber">المتسلسل</label>
+<input type="number" id="serialNumber" inputmode="numeric" min="1" max="50" step="1" placeholder="1 - 50" required>
+</div>
+</div>
+
+<button class="btn btn-primary" id="verifyButton" type="submit">
+التحقق وإنشاء البطاقة
+</button>
+
+</form>
+
+<!-- زر إدارة البيانات -->
+<button class="admin-entry" type="button" onclick="openAdminPassword()">
+🔐 إدارة واستيراد بيانات الطلاب
+</button>
+
+<section class="result" id="qrContainer">
+
+<h2 class="result-heading">تم التحقق من البيانات</h2>
+<p class="result-description">يمكنك حفظ البطاقة على هاتفك أو طباعتها.</p>
+
+<article class="student-card" id="studentCard">
+
+<div class="card-top">
+<div class="card-emblem">SA</div>
+<h3>بطاقة الطالب</h3>
+<p>نظام الحضور الذكي</p>
+</div>
+
+<div class="card-label">STUDENT IDENTIFICATION</div>
+
+<div id="qrcode">
+<canvas id="qrCanvas"></canvas>
+</div>
+
+<div class="card-name" id="cardName"></div>
+
+<div class="card-details">
+<div class="detail-row">
+<span class="detail-label">الرقم القومي:</span>
+<span class="detail-value" id="cardNationalId"></span>
+</div>
+
+<div class="detail-row">
+<span class="detail-label">الشعبة:</span>
+<span class="detail-value" id="cardSection"></span>
+</div>
+
+<div class="detail-row">
+<span class="detail-label">المتسلسل:</span>
+<span class="detail-value" id="cardSerial"></span>
+</div>
+
+<div class="detail-row">
+<span class="detail-label">كود الطالب:</span>
+<span class="detail-value" id="cardCode"></span>
+</div>
+</div>
+
+<div class="card-footer">
+بطاقة تعريف إلكترونية للطالب<br>
+يستخدم رمز QR للتعرّف على سجل الطالب في النظام.
+</div>
+
+</article>
+
+<div class="actions">
+<button class="btn btn-pdf" id="pdfButton" type="button">📄 تنزيل البطاقة بصيغة PDF</button>
+<button class="btn btn-image" id="imageButton" type="button">🖼️ تنزيل البطاقة بصيغة PNG</button>
+<button class="btn btn-reset" id="resetButton" type="button">العودة إلى نموذج التحقق</button>
+</div>
+
+</section>
+</section>
+
+<footer class="footer">الحضور الذكي © 2026</footer>
+
+</main>
+
+<!-- نافذة كلمة سر المدير -->
+<div class="modal" id="adminPasswordModal">
+<div class="modal-content">
+
+<h3>🔐 دخول إدارة الطلاب</h3>
+<p class="admin-description">هذه المنطقة مخصصة لمسؤول النظام فقط.</p>
+
+<div id="adminPasswordError" class="error-msg">كلمة السر غير صحيحة.</div>
+
+<input type="password" id="adminPassword" placeholder="كلمة سر المدير" autocomplete="off">
+
+<div class="modal-buttons">
+<button class="modal-btn btn-confirm" type="button" onclick="verifyAdminPassword()">دخول</button>
+<button class="modal-btn btn-cancel" type="button" onclick="closeAdminPassword()">إلغاء</button>
+</div>
+
+</div>
+</div>
+
+<!-- نافذة استيراد الطلاب -->
+<div class="modal" id="importModal">
+<div class="modal-content">
+
+<h3>إدارة بيانات الطلاب</h3>
+
+<p class="admin-description">
+اختر ملف Excel أو CSV يحتوي على بيانات الطلاب.
+سيتم فحص البيانات قبل حفظها.
+</p>
+
+<label class="file-label">
+📁 اختر ملف Excel أو CSV
+<input type="file" id="studentsFile" accept=".xlsx,.xls,.csv">
+</label>
+
+<div class="file-name" id="fileName">لم يتم اختيار ملف بعد</div>
+
+<div class="import-warning">
+<strong>ترتيب الأعمدة المطلوب:</strong><br>
+الاسم الرباعي | الرقم القومي | الشعبة | المتسلسل<br>
+يمكن استخدام أسماء الأعمدة الإنجليزية أيضًا:<br>
+name | nationalId | section | serial<br>
+الشعب من 1 إلى 16، والمتسلسل من 1 إلى 50، والرقم القومي 14 رقمًا.
+</div>
+
+<div id="importError" class="error-msg"></div>
+<div class="import-result" id="importResult"></div>
+
+<button class="btn-import" id="importButton" type="button" onclick="importStudents()">
+فحص الملف واستيراد الطلاب
+</button>
+
+<button class="btn-close" type="button" onclick="closeImportModal()">إغلاق</button>
+
+</div>
+</div>
+
+<script>
+"use strict";
+
+/* إعدادات النظام المشتركة */
+const STORAGE_KEY = "SmartAttendanceStudentsV1";
+const ADMIN_PASSWORD = "SA2026@Admin";
+
+/* عناصر بوابة الطالب */
+const form = document.getElementById("studentForm");
+const message = document.getElementById("message");
+const qrContainer = document.getElementById("qrContainer");
+const verifyButton = document.getElementById("verifyButton");
+const pdfButton = document.getElementById("pdfButton");
+const imageButton = document.getElementById("imageButton");
+const sectionSelect = document.getElementById("section");
+
+let currentStudent = null;
+let selectedFile = null;
+
+/* إنشاء الشعب */
+for(let i=1;i<=16;i++){
+ const option=document.createElement("option");
+ option.value=String(i);
+ option.textContent="شعبة "+i;
+ sectionSelect.appendChild(option);
+}
+
+/* أدوات عامة */
+function normalizeName(value){
+ return String(value||"").trim().replace(/\s+/g," ");
+}
+
+function showMessage(text,type){
+ message.textContent=text;
+ message.className="message "+type;
+}
+
+function hideMessage(){
+ message.textContent="";
+ message.className="message";
+}
+
+function hideCard(){
+ qrContainer.style.display="none";
+ currentStudent=null;
+}
+
+function setText(id,value){
+ document.getElementById(id).textContent=value;
+}
+
+function createStudentCode(student){
+ return "STU-"+String(student.section).padStart(2,"0")+"-"+String(student.serial).padStart(3,"0");
+}
+
+/* قراءة قاعدة الطلاب المحلية */
+function getStudents(){
+ try{
+  const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+  return Array.isArray(data)?data:[];
+ }catch(e){
+  return [];
+ }
+}
+
+/* التحقق وإنشاء QR */
+form.addEventListener("submit",function(event){
+
+ event.preventDefault();
+ hideMessage();
+ hideCard();
+
+ const name=normalizeName(document.getElementById("fullName").value);
+ const nationalId=document.getElementById("nationalId").value.trim();
+ const section=sectionSelect.value;
+ const serial=String(document.getElementById("serialNumber").value).trim();
+
+ if(!name){
+  showMessage("يرجى إدخال الاسم الرباعي.","error");
+  return;
+ }
+
+ if(!/^[0-9]{14}$/.test(nationalId)){
+  showMessage("الرقم القومي يجب أن يتكون من 14 رقمًا إنجليزيًا.","error");
+  return;
+ }
+
+ const serialNumber=Number(serial);
+
+ if(!Number.isInteger(serialNumber)||serialNumber<1||serialNumber>50){
+  showMessage("المتسلسل يجب أن يكون رقمًا صحيحًا من 1 إلى 50.","error");
+  return;
+ }
+
+ if(!section){
+  showMessage("يرجى اختيار الشعبة.","error");
+  return;
+ }
+
+ const students=getStudents();
+
+ if(!students.length){
+  showMessage("لا توجد بيانات طلاب مستوردة على هذا الجهاز. يرجى التواصل مع إدارة النظام.","error");
+  return;
+ }
+
+ const matchedStudent=students.find(student=>
+  normalizeName(student.name)===name &&
+  String(student.nationalId)===nationalId &&
+  String(student.section)===section &&
+  String(student.serial)===serial
+ );
+
+ if(!matchedStudent){
+  showMessage("تعذر التحقق من البيانات. تأكد من مطابقة الاسم والرقم القومي والشعبة والمتسلسل للكشف الرسمي.","error");
+  return;
+ }
+
+ if(!window.QRious){
+  showMessage("تعذر تحميل مكتبة QR. تحقق من اتصال الإنترنت ثم أعد المحاولة.","error");
+  return;
+ }
+
+ try{
+
+  currentStudent=matchedStudent;
+
+  const studentCode=matchedStudent.code||createStudentCode(matchedStudent);
+  const qrPayload=JSON.stringify({type:"student",code:studentCode});
+
+  new QRious({
+   element:document.getElementById("qrCanvas"),
+   value:qrPayload,
+   size:240,
+   level:"H",
+   background:"#ffffff",
+   foreground:"#0f172a"
+  });
+
+  setText("cardName",matchedStudent.name);
+  setText("cardNationalId",matchedStudent.nationalId);
+  setText("cardSection",matchedStudent.section);
+  setText("cardSerial",matchedStudent.serial);
+  setText("cardCode",studentCode);
+
+  qrContainer.style.display="block";
+
+  showMessage("تم التحقق من البيانات بنجاح. البطاقة جاهزة للحفظ.","success");
+
+  qrContainer.scrollIntoView({behavior:"smooth",block:"start"});
+
+ }catch(error){
+
+  hideCard();
+  showMessage("حدث خطأ أثناء إنشاء البطاقة. حاول مرة أخرى.","error");
+
+ }
+
+});
+
+/* حفظ البطاقة */
+async function renderStudentCard(){
+
+ if(!currentStudent)throw new Error("لا توجد بطاقة تم التحقق منها.");
+
+ if(!window.html2canvas)throw new Error("تعذر تحميل مكتبة تصوير البطاقة.");
+
+ if(document.fonts&&document.fonts.ready){
+  await document.fonts.ready;
+ }
+
+ const card=document.getElementById("studentCard");
+
+ return await html2canvas(card,{
+  scale:2,
+  backgroundColor:"#ffffff",
+  useCORS:true,
+  logging:false,
+  width:card.scrollWidth,
+  height:card.scrollHeight,
+  windowWidth:Math.max(document.documentElement.clientWidth,card.scrollWidth)
+ });
+
+}
+
+function safeFilename(value){
+ return String(value).replace(/[^a-zA-Z0-9_-]/g,"_");
+}
+
+async function downloadPDF(){
+
+ if(!currentStudent){
+  showMessage("تحقق من بيانات الطالب أولًا.","error");
+  return;
+ }
+
+ const originalText=pdfButton.textContent;
+
+ pdfButton.disabled=true;
+ pdfButton.textContent="جارٍ تجهيز ملف PDF...";
+
+ try{
+
+  if(!window.jspdf||!window.jspdf.jsPDF){
+   throw new Error("تعذر تحميل مكتبة PDF. تحقق من الإنترنت.");
+  }
+
+  const canvas=await renderStudentCard();
+  const imageData=canvas.toDataURL("image/png");
+
+  const {jsPDF}=window.jspdf;
+
+  const pdfWidth=90;
+  const pdfHeight=pdfWidth*canvas.height/canvas.width;
+
+  const pdf=new jsPDF({
+   orientation:pdfHeight>pdfWidth?"portrait":"landscape",
+   unit:"mm",
+   format:[pdfWidth,pdfHeight],
+   compress:true
+  });
+
+  pdf.addImage(imageData,"PNG",0,0,pdfWidth,pdfHeight,undefined,"FAST");
+
+  pdf.save("Student_Card_"+safeFilename(currentStudent.code||createStudentCode(currentStudent))+".pdf");
+
+  showMessage("تم تجهيز ملف PDF لتنزيل البطاقة.","success");
+
+ }catch(error){
+
+  showMessage(error.message||"تعذر إنشاء PDF. حاول مجددًا.","error");
+
+ }finally{
+
+  pdfButton.disabled=false;
+  pdfButton.textContent=originalText;
+
+ }
+
+}
+
+async function downloadPNG(){
+
+ if(!currentStudent){
+  showMessage("تحقق من بيانات الطالب أولًا.","error");
+  return;
+ }
+
+ const originalText=imageButton.textContent;
+
+ imageButton.disabled=true;
+ imageButton.textContent="جارٍ تجهيز الصورة...";
+
+ try{
+
+  const canvas=await renderStudentCard();
+  const link=document.createElement("a");
+
+  link.download="Student_Card_"+safeFilename(currentStudent.code||createStudentCode(currentStudent))+".png";
+  link.href=canvas.toDataURL("image/png");
+  link.click();
+
+  showMessage("تم تجهيز صورة البطاقة للتنزيل.","success");
+
+ }catch(error){
+
+  showMessage(error.message||"تعذر إنشاء الصورة.","error");
+
+ }finally{
+
+  imageButton.disabled=false;
+  imageButton.textContent=originalText;
+
+ }
+
+}
+
+pdfButton.addEventListener("click",downloadPDF);
+imageButton.addEventListener("click",downloadPNG);
+
+document.getElementById("resetButton").addEventListener("click",function(){
+
+ form.reset();
+ hideCard();
+ hideMessage();
+
+ document.getElementById("fullName").focus();
+
+ window.scrollTo({top:0,behavior:"smooth"});
+
+});
+
+form.addEventListener("input",function(){
+ if(currentStudent){
+  hideCard();
+  hideMessage();
+ }
+});
+
+form.addEventListener("change",function(){
+ if(currentStudent){
+  hideCard();
+  hideMessage();
+ }
+});
+
+/* =========================
+   إدارة واستيراد بيانات الطلاب
+========================= */
+
+function openAdminPassword(){
+
+ document.getElementById("adminPassword").value="";
+ document.getElementById("adminPasswordError").style.display="none";
+
+ document.getElementById("adminPasswordModal").style.display="flex";
+
+ document.getElementById("adminPassword").focus();
+
+}
+
+function closeAdminPassword(){
+ document.getElementById("adminPasswordModal").style.display="none";
+}
+
+function verifyAdminPassword(){
+
+ const entered=document.getElementById("adminPassword").value;
+
+ if(entered===ADMIN_PASSWORD){
+
+  closeAdminPassword();
+  openImportModal();
+
+ }else{
+
+  document.getElementById("adminPasswordError").style.display="block";
+  document.getElementById("adminPassword").value="";
+  document.getElementById("adminPassword").focus();
+
+ }
+
+}
+
+function openImportModal(){
+
+ document.getElementById("importModal").style.display="flex";
+
+ document.getElementById("importError").style.display="none";
+ document.getElementById("importResult").style.display="none";
+
+}
+
+function closeImportModal(){
+ document.getElementById("importModal").style.display="none";
+}
+
+/* اختيار الملف */
+document.getElementById("studentsFile").addEventListener("change",function(){
+
+ selectedFile=this.files&&this.files[0]?this.files[0]:null;
+
+ document.getElementById("fileName").textContent=
+ selectedFile?selectedFile.name:"لم يتم اختيار ملف بعد";
+
+ document.getElementById("importError").style.display="none";
+ document.getElementById("importResult").style.display="none";
+
+});
+
+/* توحيد عناوين الأعمدة */
+function normalizeHeader(value){
+
+ return String(value||"")
+ .trim()
+ .toLowerCase()
+ .replace(/[\s_\-ـ]/g,"")
+ .replace(/[أإآ]/g,"ا")
+ .replace(/ى/g,"ي")
+ .replace(/[ًٌٍَُِّْ]/g,"");
+
+}
+
+/* تحويل الأرقام العربية إلى إنجليزية */
+function digitsOnly(value){
+
+ return String(value===undefined||value===null?"":value)
+ .trim()
+ .replace(/\.0$/,"")
+ .replace(/[٠-٩]/g,d=>String("٠١٢٣٤٥٦٧٨٩".indexOf(d)))
+ .replace(/[۰-۹]/g,d=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+
+}
+
+/* البحث عن الأعمدة */
+function findColumn(headers,aliases){
+
+ const normalizedAliases=aliases.map(alias=>normalizeHeader(alias));
+
+ return headers.findIndex(header=>
+  normalizedAliases.includes(normalizeHeader(header))
+ );
+
+}
+
+function showImportError(text){
+
+ const el=document.getElementById("importError");
+
+ el.textContent=text;
+ el.style.display="block";
+
+ document.getElementById("importResult").style.display="none";
+
+}
+
+function showImportResult(text){
+
+ const el=document.getElementById("importResult");
+
+ el.textContent=text;
+ el.style.display="block";
+
+ document.getElementById("importError").style.display="none";
+
+}
+
+/* استيراد وفحص ملف الطلاب */
+async function importStudents(){
+
+ const button=document.getElementById("importButton");
+
+ if(!selectedFile){
+  showImportError("اختر ملف Excel أو CSV أولًا.");
+  return;
+ }
+
+ if(!window.XLSX){
+  showImportError("تعذر تحميل قارئ Excel. تحقق من الإنترنت ثم أعد فتح الصفحة.");
+  return;
+ }
+
+ button.disabled=true;
+ button.textContent="جارٍ فحص البيانات...";
+
+ try{
+
+  const buffer=await selectedFile.arrayBuffer();
+
+  const workbook=XLSX.read(buffer,{
+   type:"array",
+   raw:false,
+   codepage:65001
+  });
+
+  const firstSheet=workbook.Sheets[workbook.SheetNames[0]];
+
+  if(!firstSheet){
+   throw new Error("الملف لا يحتوي على ورقة بيانات.");
+  }
+
+  const rows=XLSX.utils.sheet_to_json(firstSheet,{
+   header:1,
+   defval:"",
+   raw:false
+  });
+
+  if(rows.length<2){
+   throw new Error("الملف فارغ أو لا يحتوي على بيانات طلاب.");
+  }
+
+  const headers=rows[0];
+
+  const nameIndex=findColumn(headers,[
+   "الاسم",
+   "الاسم الرباعي",
+   "الاسم الرباعى",
+   "الاسم الكامل",
+   "fullname",
+   "name",
+   "studentname"
+  ]);
+
+  const idIndex=findColumn(headers,[
+   "الرقم القومي",
+   "الرقم القومى",
+   "الرقم القومي للطالب",
+   "nationalid",
+   "nationalnumber",
+   "nationalidentity"
+  ]);
+
+  const sectionIndex=findColumn(headers,[
+   "الشعبة",
+   "رقم الشعبة",
+   "section",
+   "sectionnumber"
+  ]);
+
+  const serialIndex=findColumn(headers,[
+   "المتسلسل",
+   "الرقم المسلسل",
+   "serial",
+   "serialnumber"
+  ]);
+
+  if([nameIndex,idIndex,sectionIndex,serialIndex].some(index=>index<0)){
+
+   throw new Error(
+    "عناوين الأعمدة غير مكتملة.\n"+
+    "تأكد من وجود: الاسم الرباعي، الرقم القومي، الشعبة، المتسلسل.\n"+
+    "الاسم: "+(nameIndex>=0?"نعم":"لا")+
+    " | الرقم القومي: "+(idIndex>=0?"نعم":"لا")+
+    " | الشعبة: "+(sectionIndex>=0?"نعم":"لا")+
+    " | المتسلسل: "+(serialIndex>=0?"نعم":"لا")
+   );
+
+  }
+
+  const students=[];
+  const nationalIds=new Set();
+  const positions=new Set();
+  const errors=[];
+
+  for(let i=1;i<rows.length;i++){
+
+   const row=rows[i];
+
+   if(!row||row.every(cell=>String(cell||"").trim()==="")){
+    continue;
+   }
+
+   const name=normalizeName(row[nameIndex]);
+   const nationalId=digitsOnly(row[idIndex]);
+   const section=digitsOnly(row[sectionIndex]);
+   const serial=digitsOnly(row[serialIndex]);
+
+   if(!name){
+    errors.push("الصف "+(i+1)+": الاسم فارغ.");
+    continue;
+   }
+
+   if(!/^[0-9]{14}$/.test(nationalId)){
+    errors.push("الصف "+(i+1)+": الرقم القومي يجب أن يكون 14 رقمًا.");
+    continue;
+   }
+
+   const sectionNumber=Number(section);
+   const serialNumber=Number(serial);
+
+   if(!Number.isInteger(sectionNumber)||sectionNumber<1||sectionNumber>16){
+    errors.push("الصف "+(i+1)+": الشعبة يجب أن تكون من 1 إلى 16.");
+    continue;
+   }
+
+   if(!Number.isInteger(serialNumber)||serialNumber<1||serialNumber>50){
+    errors.push("الصف "+(i+1)+": المتسلسل يجب أن يكون من 1 إلى 50.");
+    continue;
+   }
+
+   if(nationalIds.has(nationalId)){
+    errors.push("الصف "+(i+1)+": الرقم القومي مكرر.");
+    continue;
+   }
+
+   const position=sectionNumber+"-"+serialNumber;
+
+   if(positions.has(position)){
+    errors.push("الصف "+(i+1)+": الشعبة والمتسلسل مكرران.");
+    continue;
+   }
+
+   nationalIds.add(nationalId);
+   positions.add(position);
+
+   const code=
+    "STU-"+
+    String(sectionNumber).padStart(2,"0")+
+    "-"+
+    String(serialNumber).padStart(3,"0");
+
+   students.push({
+    name:name,
+    nationalId:nationalId,
+    section:String(sectionNumber),
+    serial:String(serialNumber),
+    code:code
+   });
+
+  }
+
+  if(errors.length){
+
+   const preview=errors.slice(0,8).join(" | ");
+
+   const extra=errors.length>8
+    ?" | وهناك "+(errors.length-8)+" أخطاء أخرى."
+    :"";
+
+   throw new Error(
+    "لم يتم حفظ الملف لأن به "+errors.length+
+    " خطأ: "+preview+extra
+   );
+
+  }
+
+  if(!students.length){
+   throw new Error("لم يتم العثور على سجلات طلاب صالحة.");
+  }
+
+  const confirmed=confirm(
+   "تم فحص الملف بنجاح.\n"+
+   "عدد الطلاب: "+students.length+
+   "\nسيتم استبدال قائمة الطلاب المحفوظة حاليًا بهذه القائمة.\n"+
+   "هل تريد المتابعة؟"
+  );
+
+  if(!confirmed)return;
+
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(students));
+
+  showImportResult(
+   "تم الاستيراد بنجاح.\n"+
+   "عدد الطلاب المحفوظين: "+students.length+
+   " طالبًا.\n"+
+   "يمكن الآن استخدام البيانات لإنشاء بطاقات الطلاب."
+  );
+
+ }catch(error){
+
+  showImportError(error.message||"حدث خطأ أثناء قراءة الملف.");
+
+ }finally{
+
+  button.disabled=false;
+  button.textContent="فحص الملف واستيراد الطلاب";
+
+ }
+
+}
+
+/* اختصارات لوحة المفاتيح */
+document.getElementById("adminPassword").addEventListener("keydown",function(event){
+ if(event.key==="Enter")verifyAdminPassword();
+});
+
+/* إغلاق النوافذ بالضغط خارجها */
+["adminPasswordModal","importModal"].forEach(id=>{
+
+ document.getElementById(id).addEventListener("click",function(event){
+
+  if(event.target!==this)return;
+
+  if(id==="adminPasswordModal")closeAdminPassword();
+  if(id==="importModal")closeImportModal();
+
+ });
+
+});
+
+</script>
+
+</body>
+</html>
